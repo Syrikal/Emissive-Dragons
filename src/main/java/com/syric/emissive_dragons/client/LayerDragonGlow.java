@@ -6,6 +6,7 @@ import com.iafenvoy.iceandfire.render.entity.layer.LayerDragonEyes;
 import com.iafenvoy.uranus.client.model.TabulaModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.syric.emissive_dragons.EDClientConfig;
 import com.syric.emissive_dragons.EmissiveDragons;
 import com.syric.emissive_dragons.registry.EDRenderTypes;
 import net.minecraft.client.Minecraft;
@@ -16,8 +17,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class LayerDragonGlow extends LayerDragonEyes {
@@ -28,7 +28,10 @@ public class LayerDragonGlow extends LayerDragonEyes {
     @Override
     public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, EntityDragonBase dragon, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
         ResourceLocation glowTexture = getGlowTexture(dragon);
-        if (glowTexture == null || Minecraft.getInstance().getResourceManager().getResource(glowTexture).isEmpty()) return;
+        if (Minecraft.getInstance().getResourceManager().getResource(glowTexture).isEmpty()
+                || !EDClientConfig.DRAGON_GLOW_GLOBAL_TOGGLE.get()
+                //Insert condition here checking if the dragon should be ignored
+        ) return;
         RenderType eyes = EDRenderTypes.dragonGlow(glowTexture);
         VertexConsumer ivertexbuilder = bufferIn.getBuffer(eyes);
 
@@ -38,15 +41,64 @@ public class LayerDragonGlow extends LayerDragonEyes {
         this.getParentModel().renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, glowIntensity);
     }
 
-    @Nullable
-    private ResourceLocation getGlowTexture(EntityDragonBase dragon) {
-        if (dragon.isSleeping()) {
-            return ResourceLocation.fromNamespaceAndPath(EmissiveDragons.MODID, String.format("textures/models/%sdragon/%s_%d_%s_glow_sleep.png", dragon.dragonType.getName(), DragonColor.getById(dragon.getVariant()).name(), dragon.getDragonStage(), dragon.isMale() ? "male" : "female"));
+    private @NotNull ResourceLocation getGlowTexture(EntityDragonBase dragon) {
+
+        ResourceLocation male_sleep = ResourceLocation.fromNamespaceAndPath(
+                EmissiveDragons.MODID,
+                String.format("textures/models/%sdragon/%s_%d_male_glow_sleep.png",
+                        dragon.dragonType.getName(),
+                        DragonColor.getById(dragon.getVariant()).name(),
+                        dragon.getDragonStage())
+        );
+        ResourceLocation female_sleep = ResourceLocation.fromNamespaceAndPath(
+                EmissiveDragons.MODID,
+                String.format("textures/models/%sdragon/%s_%d_female_glow_sleep.png",
+                        dragon.dragonType.getName(),
+                        DragonColor.getById(dragon.getVariant()).name(),
+                        dragon.getDragonStage())
+        );
+        ResourceLocation male_awake = ResourceLocation.fromNamespaceAndPath(
+                EmissiveDragons.MODID,
+                String.format("textures/models/%sdragon/%s_%d_male_glow.png",
+                        dragon.dragonType.getName(),
+                        DragonColor.getById(dragon.getVariant()).name(),
+                        dragon.getDragonStage())
+        );
+        ResourceLocation female_awake = ResourceLocation.fromNamespaceAndPath(
+                EmissiveDragons.MODID,
+                String.format("textures/models/%sdragon/%s_%d_female_glow.png",
+                        dragon.dragonType.getName(),
+                        DragonColor.getById(dragon.getVariant()).name(),
+                        dragon.getDragonStage())
+        );
+
+        boolean male_sleep_present = Minecraft.getInstance().getResourceManager().getResource(male_sleep).isPresent();
+        boolean female_sleep_present = Minecraft.getInstance().getResourceManager().getResource(female_sleep).isPresent();
+        boolean female_awake_present = Minecraft.getInstance().getResourceManager().getResource(female_awake).isPresent();
+
+        if (dragon.isSleeping() && EDClientConfig.DIFFERENT_SLEEP_GLOW.get()) {
+            if (!dragon.isMale() && EDClientConfig.DIMORPHIC_GLOW.get()) {
+                if (female_sleep_present) {
+                    return female_sleep;
+                }
+                if (female_awake_present) {
+                    return female_awake;
+                }
+            }
+            if (male_sleep_present) {
+                return male_sleep;
+            }
         } else {
-            return ResourceLocation.fromNamespaceAndPath(EmissiveDragons.MODID, String.format("textures/models/%sdragon/%s_%d_%s_glow.png", dragon.dragonType.getName(), DragonColor.getById(dragon.getVariant()).name(), dragon.getDragonStage(), dragon.isMale() ? "male" : "female"));
+            if (!dragon.isMale() && EDClientConfig.DIMORPHIC_GLOW.get()) {
+                if (female_awake_present) {
+                    return female_awake;
+                }
+            }
         }
+        return male_awake;
     }
 
+    //Removed method for making the glow 'breathe'
 //    private float calculateGlowIntensity(EntityDragonBase dragon, float partialTicks) {
 //        if (!EDClientConfig.DRAGON_GLOW_BREATHING.get()) return 1;
 //        double input = dragon.tickCount + partialTicks;

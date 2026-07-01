@@ -10,7 +10,7 @@
   },
   "refmap": "emissive_dragons.mixin-refmap.json",
   "client": [
-    "accessor.LayerDragonEyesAccessor",
+    "MixinLayerDragonEyes",
     "MixinRenderDragonBase"
   ]
 }
