@@ -2,7 +2,9 @@ This mod allows dragons to render emissive "glow" textures. These textures can v
 
 This mod _does not add any textures of its own!_ It will do nothing alone. It _must_ be paired with a resource pack designed to use Emissive Dragons. It was created for [Tabla's Dragon Retextures]([url](https://www.curseforge.com/minecraft/texture-packs/excalibur-ice-and-fire-tablas-dragon-retextures)), but I encourage other resource pack artists to make their own!
 
-The mod may be toggled entirely in config, and it will ignore any dragon with the "EmissiveDragonsIgnore:true" NBT tag.
+The mod may be toggled entirely in config. If you want a dragon to be unaffected, use the /tag command to give it the "emissive_dragons_ignore" tag. To restore its glow, give it the "emissive_dragons_dont_ignore" tag.
+
+The mod theoretically _should_ work if you only have it installed on the client (except for toggling individual dragons' glow, that requires the server), but I recommend having it on the server too just to be safe.
 
 File structure:
 - resources
@@ -23,7 +25,7 @@ File structure:
 
 "Eyes" textures disappear whenever the dragon closes its eyes, including blinking. If present, they override and replace the dragon's usual Eyes texture! In Community Edition, they also only affect the dragon's head and neck. If you want different eye glows for female dragons, add a female variant eyes texture; otherwise they use the same one as the males.
 
-"Glow" textures apply across the whole body and change to their alternate version when the dragon is asleep, unless "different sleeping glow" is turned off in config or no alternate is provided, in which case they keep using the default "_glow" file. 
+"Glow" textures apply across the whole body and change to their alternate version ("glow_sleep") when the dragon is asleep, unless "different sleeping glow" is turned off in config or no alternate is provided, in which case they keep using the default "_glow" file. 
 
 If no sleeping glow texture is provided, the mod will default to the regular glow; if no female glow is provided it will default to the male. If you want to disable the glow for a particular sex or sleep status, rather than not adding a texture file, add an empty one.
 
