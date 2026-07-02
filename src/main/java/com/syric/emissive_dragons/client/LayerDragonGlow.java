@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.syric.emissive_dragons.EDClientConfig;
 import com.syric.emissive_dragons.EmissiveDragons;
+import com.syric.emissive_dragons.dragon_ignoring.DragonIgnoreDataProvider;
 import com.syric.emissive_dragons.registry.EDRenderTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -17,7 +18,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @OnlyIn(Dist.CLIENT)
 public class LayerDragonGlow extends LayerDragonEyes {
@@ -27,21 +29,34 @@ public class LayerDragonGlow extends LayerDragonEyes {
 
     @Override
     public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, EntityDragonBase dragon, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+//        EmissiveDragons.LOGGER.debug("Rendering a {} dragon", dragon.dragonType.getName());
+
+//        EmissiveDragons.LOGGER.debug("{} dragon {} capability on the {} side",
+//                dragon.dragonType.getName(),
+//                dragon.getCapability(DragonIgnoreDataProvider.DRAGON_IGNORE_DATA).isPresent() ? "has" : "does not have",
+//                ((Entity) dragon).level().isClientSide() ? "client" : "server");
+
+        AtomicBoolean ignore = new AtomicBoolean(false);
+        dragon.getCapability(DragonIgnoreDataProvider.DRAGON_IGNORE_DATA).ifPresent(data -> {
+            if (!data.doEmissiveRendering()) ignore.set(true);
+//            EmissiveDragons.LOGGER.debug("Dragon capability has doEmissiveRendering set to {}", data.doEmissiveRendering());
+        });
+
         ResourceLocation glowTexture = getGlowTexture(dragon);
         if (Minecraft.getInstance().getResourceManager().getResource(glowTexture).isEmpty()
                 || !EDClientConfig.DRAGON_GLOW_GLOBAL_TOGGLE.get()
-                //Insert condition here checking if the dragon should be ignored
+                || ignore.get()
         ) return;
-        RenderType eyes = EDRenderTypes.dragonGlow(glowTexture);
-        VertexConsumer ivertexbuilder = bufferIn.getBuffer(eyes);
 
+        RenderType glow = EDRenderTypes.dragonGlow(glowTexture);
+        VertexConsumer ivertexbuilder = bufferIn.getBuffer(glow);
 //        float glowIntensity = calculateGlowIntensity(dragon, partialTicks);
         float glowIntensity = 1;
 
         this.getParentModel().renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, glowIntensity);
     }
 
-    private @NotNull ResourceLocation getGlowTexture(EntityDragonBase dragon) {
+    private ResourceLocation getGlowTexture(EntityDragonBase dragon) {
 
         ResourceLocation male_sleep = ResourceLocation.fromNamespaceAndPath(
                 EmissiveDragons.MODID,

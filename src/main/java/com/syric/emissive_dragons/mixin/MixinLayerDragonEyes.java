@@ -8,11 +8,14 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.syric.emissive_dragons.EDClientConfig;
 import com.syric.emissive_dragons.EmissiveDragons;
+import com.syric.emissive_dragons.dragon_ignoring.DragonIgnoreDataProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mixin(LayerDragonEyes.class)
 public class MixinLayerDragonEyes {
@@ -38,9 +41,14 @@ public class MixinLayerDragonEyes {
 
         ResourceLocation version_to_use = (dragon.isMale() || Minecraft.getInstance().getResourceManager().getResource(emissive_dragons_female_version).isEmpty() || !EDClientConfig.DIMORPHIC_EYE_GLOW.get()) ? emissive_dragons_male_version : emissive_dragons_female_version;
 
+        AtomicBoolean ignore = new AtomicBoolean(false);
+        dragon.getCapability(DragonIgnoreDataProvider.DRAGON_IGNORE_DATA).ifPresent(data -> {
+            if (!data.doEmissiveRendering()) ignore.set(true);
+        });
+
         if (Minecraft.getInstance().getResourceManager().getResource(version_to_use).isEmpty()
                 || !EDClientConfig.DRAGON_GLOW_GLOBAL_TOGGLE.get()
-                //Insert condition here for "the dragon is ignored"
+                || ignore.get()
         ) {
             return original.call(originalEyesResource);
         } else {
