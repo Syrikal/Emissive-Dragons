@@ -1,8 +1,7 @@
 package com.syric.emissive_dragons.mixin;
 
-import com.iafenvoy.iceandfire.data.DragonColor;
-import com.iafenvoy.iceandfire.entity.EntityDragonBase;
-import com.iafenvoy.iceandfire.render.entity.layer.LayerDragonEyes;
+import com.github.alexthe666.iceandfire.client.render.entity.layer.LayerDragonEyes;
+import com.github.alexthe666.iceandfire.entity.EntityDragonBase;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -20,22 +19,22 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Mixin(LayerDragonEyes.class)
 public class MixinLayerDragonEyes {
 
-    @WrapOperation(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILcom/iafenvoy/iceandfire/entity/EntityDragonBase;FFFFFF)V",
+    @WrapOperation(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILcom/github/alexthe666/iceandfire/entity/EntityDragonBase;FFFFFF)V",
     at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderType;eyes(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/RenderType;"))
     private RenderType replaceEyes(ResourceLocation originalEyesResource, Operation<RenderType> original, @Local(argsOnly = true) EntityDragonBase dragon) {
         ResourceLocation emissive_dragons_male_version = ResourceLocation.fromNamespaceAndPath(
                 EmissiveDragons.MODID,
-                String.format("textures/models/%sdragon/%s_%d_eyes.png",
+                String.format("textures/models/%sdragon/%s%d_eyes.png",
                         dragon.dragonType.getName(),
-                        DragonColor.getById(dragon.getVariant()).name(),
+                        dragon.getVariantName(dragon.getVariant()),
                         dragon.getDragonStage())
         );
 
         ResourceLocation emissive_dragons_female_version = ResourceLocation.fromNamespaceAndPath(
                 EmissiveDragons.MODID,
-                String.format("textures/models/%sdragon/%s_%d_eyes_female.png",
+                String.format("textures/models/%sdragon/%s%d_eyes_female.png",
                         dragon.dragonType.getName(),
-                        DragonColor.getById(dragon.getVariant()).name(),
+                        dragon.getVariantName(dragon.getVariant()),
                         dragon.getDragonStage())
         );
 

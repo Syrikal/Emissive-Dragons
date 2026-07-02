@@ -168,10 +168,9 @@ dependencies {
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    implementation fg.deobf("maven.modrinth:iceandfire-ce:Rq1ofgUQ")
-    implementation fg.deobf("maven.modrinth:uranus:2.2.6-bugfix.2")
-    implementation fg.deobf("maven.modrinth:jupiter:2.3.7-1.20.1-forge")
-    implementation fg.deobf("maven.modrinth:architectury-api:1MKTLiiG")
+    implementation fg.deobf("maven.modrinth:ice-and-fire-dragons:2.1.13-1.20.1-beta-5")
+    implementation fg.deobf("maven.modrinth:citadel:2.6.3")
+
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 

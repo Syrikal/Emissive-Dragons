@@ -1,6 +1,6 @@
 package com.syric.emissive_dragons.dragon_ignoring;
 
-import com.iafenvoy.iceandfire.entity.EntityDragonBase;
+import com.github.alexthe666.iceandfire.entity.EntityDragonBase;
 import com.syric.emissive_dragons.EmissiveDragons;
 import com.syric.emissive_dragons.network.EDPacketHandler;
 import com.syric.emissive_dragons.network.S2CDragonIgnorePacket;

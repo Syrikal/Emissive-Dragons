@@ -1,9 +1,8 @@
 package com.syric.emissive_dragons.client;
 
-import com.iafenvoy.iceandfire.data.DragonColor;
-import com.iafenvoy.iceandfire.entity.EntityDragonBase;
-import com.iafenvoy.iceandfire.render.entity.layer.LayerDragonEyes;
-import com.iafenvoy.uranus.client.model.TabulaModel;
+import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
+import com.github.alexthe666.iceandfire.client.render.entity.layer.LayerDragonEyes;
+import com.github.alexthe666.iceandfire.entity.EntityDragonBase;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.syric.emissive_dragons.EDClientConfig;
@@ -23,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @OnlyIn(Dist.CLIENT)
 public class LayerDragonGlow extends LayerDragonEyes {
-    public LayerDragonGlow(MobRenderer<EntityDragonBase, TabulaModel<EntityDragonBase>> renderIn) {
+    public LayerDragonGlow(MobRenderer<EntityDragonBase, AdvancedEntityModel<EntityDragonBase>> renderIn) {
         super(renderIn);
     }
 
@@ -60,30 +59,30 @@ public class LayerDragonGlow extends LayerDragonEyes {
 
         ResourceLocation male_sleep = ResourceLocation.fromNamespaceAndPath(
                 EmissiveDragons.MODID,
-                String.format("textures/models/%sdragon/%s_%d_male_glow_sleep.png",
+                String.format("textures/models/%sdragon/%s%d_male_glow_sleep.png",
                         dragon.dragonType.getName(),
-                        DragonColor.getById(dragon.getVariant()).name(),
+                        dragon.getVariantName(dragon.getVariant()),
                         dragon.getDragonStage())
         );
         ResourceLocation female_sleep = ResourceLocation.fromNamespaceAndPath(
                 EmissiveDragons.MODID,
-                String.format("textures/models/%sdragon/%s_%d_female_glow_sleep.png",
+                String.format("textures/models/%sdragon/%s%d_female_glow_sleep.png",
                         dragon.dragonType.getName(),
-                        DragonColor.getById(dragon.getVariant()).name(),
+                        dragon.getVariantName(dragon.getVariant()),
                         dragon.getDragonStage())
         );
         ResourceLocation male_awake = ResourceLocation.fromNamespaceAndPath(
                 EmissiveDragons.MODID,
-                String.format("textures/models/%sdragon/%s_%d_male_glow.png",
+                String.format("textures/models/%sdragon/%s%d_male_glow.png",
                         dragon.dragonType.getName(),
-                        DragonColor.getById(dragon.getVariant()).name(),
+                        dragon.getVariantName(dragon.getVariant()),
                         dragon.getDragonStage())
         );
         ResourceLocation female_awake = ResourceLocation.fromNamespaceAndPath(
                 EmissiveDragons.MODID,
-                String.format("textures/models/%sdragon/%s_%d_female_glow.png",
+                String.format("textures/models/%sdragon/%s%d_female_glow.png",
                         dragon.dragonType.getName(),
-                        DragonColor.getById(dragon.getVariant()).name(),
+                        dragon.getVariantName(dragon.getVariant()),
                         dragon.getDragonStage())
         );
 
