@@ -45,6 +45,7 @@ public class LayerDragonGlow extends LayerDragonEyes {
         if (Minecraft.getInstance().getResourceManager().getResource(glowTexture).isEmpty()
                 || !EDClientConfig.DRAGON_GLOW_GLOBAL_TOGGLE.get()
                 || ignore.get()
+                || (dragon.isModelDead() && !EDClientConfig.DEAD_DRAGONS_GLOW.get())
         ) return;
 
         RenderType glow = EDRenderTypes.dragonGlow(glowTexture);
