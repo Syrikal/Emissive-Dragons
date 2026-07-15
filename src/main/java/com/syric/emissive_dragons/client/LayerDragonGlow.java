@@ -2,7 +2,6 @@ package com.syric.emissive_dragons.client;
 
 import com.iafenvoy.iceandfire.data.DragonColor;
 import com.iafenvoy.iceandfire.entity.EntityDragonBase;
-import com.iafenvoy.iceandfire.render.entity.layer.LayerDragonEyes;
 import com.iafenvoy.uranus.client.model.TabulaModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -14,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -22,7 +22,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @OnlyIn(Dist.CLIENT)
-public class LayerDragonGlow extends LayerDragonEyes {
+public class LayerDragonGlow extends RenderLayer<EntityDragonBase, TabulaModel<EntityDragonBase>> {
+
     public LayerDragonGlow(MobRenderer<EntityDragonBase, TabulaModel<EntityDragonBase>> renderIn) {
         super(renderIn);
     }
@@ -46,6 +47,8 @@ public class LayerDragonGlow extends LayerDragonEyes {
         if (Minecraft.getInstance().getResourceManager().getResource(glowTexture).isEmpty()
                 || !EDClientConfig.DRAGON_GLOW_GLOBAL_TOGGLE.get()
                 || ignore.get()
+                || (dragon.isModelDead() && !dragon.isSkeletal() && !EDClientConfig.DEAD_DRAGONS_GLOW.get())
+                || (dragon.isSkeletal() && !EDClientConfig.SKELETAL_DRAGONS_GLOW.get())
         ) return;
 
         RenderType glow = EDRenderTypes.dragonGlow(glowTexture);
@@ -91,7 +94,7 @@ public class LayerDragonGlow extends LayerDragonEyes {
         boolean female_sleep_present = Minecraft.getInstance().getResourceManager().getResource(female_sleep).isPresent();
         boolean female_awake_present = Minecraft.getInstance().getResourceManager().getResource(female_awake).isPresent();
 
-        if (dragon.isSleeping() && EDClientConfig.DIFFERENT_SLEEP_GLOW.get()) {
+        if (dragon.isSleeping() || dragon.isModelDead() && EDClientConfig.DIFFERENT_SLEEP_GLOW.get()) {
             if (!dragon.isMale() && EDClientConfig.DIMORPHIC_GLOW.get()) {
                 if (female_sleep_present) {
                     return female_sleep;
