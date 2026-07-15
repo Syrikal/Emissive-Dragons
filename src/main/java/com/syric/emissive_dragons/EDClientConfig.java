@@ -20,6 +20,8 @@ public class EDClientConfig {
     public static final ForgeConfigSpec.ConfigValue<Boolean> DIMORPHIC_GLOW;
     public static final ForgeConfigSpec.ConfigValue<Boolean> DIFFERENT_SLEEP_GLOW;
     public static final ForgeConfigSpec.ConfigValue<Boolean> DIMORPHIC_EYE_GLOW;
+    public static final ForgeConfigSpec.ConfigValue<Boolean> DEAD_DRAGONS_GLOW;
+    public static final ForgeConfigSpec.ConfigValue<Boolean> SKELETAL_DRAGONS_GLOW;
 
     static {
 //        BUILDER.push("Dragon Glow Configuration");
@@ -37,6 +39,8 @@ public class EDClientConfig {
         DIMORPHIC_GLOW = BUILDER.comment("Toggles whether the glow is different for male and female dragons.\nIf false, all dragons will use the 'male' textures. (They also do this if no separate female texture is loaded.)\nDon't change this unless you're a resource pack author or the resource pack you're using told you to.\nDefault: True").define("Different female textures", true);
         DIFFERENT_SLEEP_GLOW = BUILDER.comment("Toggles whether the glow is different for sleeping dragons.\nIf false, sleeping dragons will use the 'glow' texture rather than the 'glow_sleep' one. (They also do this if no separate sleep texture is loaded.)\nDon't change this unless you're a resource pack author or the resource pack you're using told you to.\nDefault: True").define("Different sleeping textures", true);
         DIMORPHIC_EYE_GLOW = BUILDER.comment("Toggles whether female dragons use a separate eye-glow texture.\nIf false, female dragons will use the standard eye textures. (They also do this if no separate female texture is loaded.) \nDon't change this unless you're a resource pack author or the resource pack you're using told you to.\nDefault: True").define("Different female eye glow textures", true);
+        DEAD_DRAGONS_GLOW = BUILDER.comment("Toggles whether dead dragons continue to use their glow texture.\nIf true, they use their sleeping glow texture.\nDefault: True").define("Dead dragons glow", true);
+        SKELETAL_DRAGONS_GLOW = BUILDER.comment("Toggles whether dragon skeletons continue to use their glow texture.\nDefault: False").define("Dragon skeletons glow", false);
 
 //        BUILDER.pop();
         SPEC = BUILDER.build();
